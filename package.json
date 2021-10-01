@@ -1,0 +1,23 @@
+{
+  "name": "pcbuilds",
+  "version": "1.0.0",
+  "description": "PC Builds Notes",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "npx tsc --project tsconfig.json && node build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/callunaborealis/pcbuilds.git"
+  },
+  "author": "callunaborealis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/callunaborealis/pcbuilds/issues"
+  },
+  "homepage": "https://github.com/callunaborealis/pcbuilds#readme",
+  "dependencies": {
+    "typescript": "^4.4.3"
+  }
+}
