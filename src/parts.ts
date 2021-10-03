@@ -1,4 +1,4 @@
-import { PCPartType } from "./types";
+import { CPUFormFactor, PCPartType, PowerSupply, StoragePCPart } from "./types";
 import type {
   Case,
   CPU,
@@ -9,11 +9,22 @@ import type {
   VideoCard,
 } from "./types";
 
-const CPUs: CPU[] = [
+const CPUs: CPU<any>[] = [
   {
-    name: "Intel Core i9-10900K 3.7 GHz 10-Core Processor",
+    compatibility: {
+      [PCPartType.ThermalCompound]: (thermalCompound) => {
+        if (thermalCompound.specs.thermalSolutionSpec === "PCG 2019A") {
+          return true;
+        }
+        return false;
+      },
+    },
+    name: "Intel Core i9-11900K 3.7 GHz 10-Core Processor",
     specs: {
-      src: "#",
+      manufacturer: "Intel",
+      series: "Intel Core i9",
+      socket: "LGA 1200",
+      src: "https://www.intel.sg/content/www/xa/en/products/sku/212325/intel-core-i911900k-processor-16m-cache-up-to-5-30-ghz/specifications.html?countrylabel=Asia%20Pacific",
     },
     prices: [],
   },
@@ -36,11 +47,20 @@ const CPUCoolers: CPUCooler[] = [
   },
 ];
 
-const Motherboards: Motherboard[] = [
+const Motherboards: Motherboard<any>[] = [
   {
     name: "MSI Z490-A PRO ATX LGA1200 Motherboard",
     compatibility: {
-      [PCPartType.CPU]: (cpu) => true,
+      [PCPartType.CPU]: (cpu) => {
+        const supportedCPU =
+          cpu.specs.manufacturer === "Intel" &&
+          ["Intel Core i9"].includes(cpu.specs.series) &&
+          cpu.specs.socket === "LGA 1200";
+        if (supportedCPU) {
+          return true;
+        }
+        return false;
+      },
       [PCPartType.Memory]: (memory) => true,
     },
     specs: {
@@ -52,8 +72,20 @@ const Motherboards: Motherboard[] = [
       formFactor: "ATX",
       src: "https://www.msi.com/Motherboard/Z490-A-PRO/Specification",
     },
-    prices: [],
-  },
+    prices: [
+      {
+        name: "Newegg",
+        currency: "SGD",
+        src: "https://www.newegg.com/global/sg-en/msi-z490-a-pro/p/N82E16813144306?Item=N82E16813144306&nm_mc=AFC-RAN-COM&cm_mmc=AFC-RAN-COM&utm_medium=affiliates&utm_source=afc-PCPartPicker&AFFID=2558510&AFFNAME=PCPartPicker&ACRID=1&ASID=https%3a%2f%2fsg.pcpartpicker.com%2f&ranMID=44583&ranEAID=2558510&ranSiteID=8BacdVP0GFs-kvE5iFaocm5I1lJcHaojNg",
+        value: {
+          base: 288.89,
+          shipping: 47.05,
+        },
+      },
+    ],
+  } as Motherboard<{
+    ddrSlots: [undefined, undefined, undefined, undefined];
+  }>,
 ];
 
 const Memories: Memory[] = [
@@ -66,11 +98,16 @@ const Memories: Memory[] = [
   },
 ];
 
-const Storages: PCPart[] = [
+const Storages: StoragePCPart[] = [
   {
     name: 'Western Digital Red Pro 10 TB 3.5" 7200RPM Internal Hard Drive',
     specs: {
-      src: "#",
+      dimensions: {
+        length: 147,
+        width: 101.6,
+        height: 26.1,
+      },
+      src: "https://shop.westerndigital.com/en-sg/products/internal-drives/wd-red-pro-sata-hdd#WD2002FFSX",
     },
     prices: [],
   },
@@ -157,9 +194,9 @@ const Cases: Case<any>[] = [
           return true;
         }
         if (
-          (
-            ["ATX", "mATX", "mITX"] as Motherboard["specs"]["formFactor"][]
-          ).includes(m.specs.formFactor)
+          (["ATX", "mATX", "mITX"] as CPUFormFactor[]).includes(
+            m.specs.formFactor
+          )
         ) {
           return true;
         }
@@ -196,11 +233,18 @@ const Cases: Case<any>[] = [
   }>,
 ];
 
-const PowerSupplies: PCPart[] = [
+const PowerSupplies: PowerSupply[] = [
   {
     name: "Phanteks Revolt X 1000 W 80+ Platinum Certified Fully Modular ATX Power Supply",
     specs: {
-      src: "#",
+      dimensions: {
+        length: 170,
+        width: 150,
+        height: 86,
+      },
+      formFactor: "ATX", // Intel ATX 12V
+      wattage: 1000,
+      src: "https://www.phanteks.com/Revolt-X.html",
     },
     prices: [],
   },

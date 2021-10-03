@@ -35,6 +35,14 @@ interface ThreeDimensions {
   height: number;
 }
 
+interface PowerSupply extends PCPart {
+  specs: PCPart["specs"] & {
+    dimensions: ThreeDimensions;
+    formFactor: CPUFormFactor;
+    wattage: number;
+  };
+}
+
 interface CPUCooler extends PCPart {
   specs: PCPart["specs"] & {
     dimensions: Record<"radiator" | "fans" | "pump", ThreeDimensions>;
@@ -49,20 +57,57 @@ interface VideoCard extends PCPart {
   };
 }
 
-interface CPU extends PCPart {
-  specs: PCPart["specs"] & {};
+interface StoragePCPart extends PCPart {
+  specs: PCPart["specs"] & {
+    /**
+     * in mm
+     */
+    dimensions: ThreeDimensions;
+  };
+}
+
+interface ThermalCompound extends PCPart {
+  specs: PCPart["specs"] & {
+    /**
+     * in mm
+     */
+    thermalSolutionSpec: "PCG 2019A";
+  };
+}
+
+/**
+ * The socket is the component that provides the mechanical
+ * and electrical connections between the processor and motherboard.
+ */
+type CPUSocket = "LGA 1200";
+
+interface CPU<State> extends PCPart {
+  compatibility: {
+    [PCPartType.ThermalCompound]: (
+      thermalComp: ThermalCompound,
+      state: State
+    ) => boolean;
+  };
+  specs: PCPart["specs"] & {
+    manufacturer: "AMD" | "Intel";
+    series: CPU<State>["specs"]["manufacturer"] extends "AMD"
+      ? "AMD Ryzen 9"
+      : "Intel Core i9";
+    src: string;
+    socket: CPUSocket;
+  };
 }
 
 interface Memory extends PCPart {
   specs: PCPart["specs"] & {};
 }
 
-type FormFactor = "ATX" | "E-ATX" | "mATX" | "mITX";
+type CPUFormFactor = "ATX" | "E-ATX" | "mATX" | "mITX";
 
-interface Motherboard extends PCPart {
+interface Motherboard<State> extends PCPart {
   compatibility: {
-    [PCPartType.CPU]: (m: CPU) => boolean;
-    [PCPartType.Memory]: (m: Memory) => boolean;
+    [PCPartType.CPU]: (cpu: CPU<any>, state: State) => boolean;
+    [PCPartType.Memory]: (m: Memory, state: State) => boolean;
   };
   specs: PCPart["specs"] & {
     /**
@@ -72,14 +117,7 @@ interface Motherboard extends PCPart {
       length: number;
       width: number;
     };
-    formFactor: FormFactor;
-  };
-}
-
-interface PowerSupply extends PCPart {
-  specs: PCPart["specs"] & {
-    dimensions: ThreeDimensions;
-    formFactor: FormFactor;
+    formFactor: CPUFormFactor;
   };
 }
 
@@ -87,7 +125,7 @@ interface Case<State> extends PCPart {
   compatibility: {
     [PCPartType.CPUCooler]: (cpuCooler: CPUCooler, state: State) => boolean;
     [PCPartType.VideoCard]: (gpu: VideoCard, state: State) => boolean;
-    [PCPartType.Motherboard]: (m: Motherboard, state: State) => boolean;
+    [PCPartType.Motherboard]: (m: Motherboard<any>, state: State) => boolean;
     [PCPartType.PowerSupply]: (m: PowerSupply, state: State) => boolean;
   };
   specs: PCPart["specs"] & {
@@ -104,9 +142,11 @@ export type {
   Case,
   CPU,
   CPUCooler,
-  FormFactor,
+  CPUFormFactor,
   Memory,
   Motherboard,
   PCPart,
+  PowerSupply,
+  StoragePCPart,
   VideoCard,
 };

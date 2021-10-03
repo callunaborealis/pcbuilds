@@ -1,8 +1,6 @@
 import { Cases, VideoCards } from "./parts";
 import { Case, PCPart, PCPartType } from "./types";
 
-const fractalCase: Case<typeof fractalCaseState> = Cases[0];
-
 const checkCompatible = <
   ParentPartType extends PCPart,
   ChildPartType extends PCPart,
@@ -42,6 +40,9 @@ const fractalCaseState: {
   hddCageInstalled: false,
   layoutType: "open",
 };
+
+const fractalCase: Case<typeof fractalCaseState> = Cases[0];
+
 const isCompatible = checkCompatible(
   fractalCase,
   VideoCards[0],
@@ -49,4 +50,4 @@ const isCompatible = checkCompatible(
   fractalCaseState
 );
 
-console.log("isCompatible", isCompatible);
+console.log("isCompatible: video card compatible with case", isCompatible);
