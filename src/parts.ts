@@ -136,6 +136,29 @@ const VideoCards: VideoCard[] = [
       },
     ],
   },
+  {
+    name: "Gigabyte Aorus 16G AMD Radeon RX 6800XT",
+    specs: {
+      dimensions: {
+        length: 267,
+        width: 120,
+        height: 40,
+      },
+      src: "https://www.alibaba.com/product-detail/Gigabyte-Radeon-RX-6800-XT-GAMING_1600306731223.html?spm=a2700.galleryofferlist.normal_offer.d_title.3de53bb2vCkmS9",
+    },
+    prices: [
+      {
+        name: "Shenzhen Eminence-Top Technology Co., Ltd.",
+        currency: "SGD",
+        src: "https://www.alibaba.com/product-detail/Brand-New-SAPPHIRE-AMD-RADEON-RX_1600193322525.html",
+        value: {
+          // 1650 USD
+          base: 2240.19, // https://exchangerate.guru/usd/sgd/1650/
+          shipping: NaN,
+        },
+      },
+    ],
+  },
 ];
 
 const Cases: Case<any>[] = [
